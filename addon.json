@@ -1,0 +1,6 @@
+{
+    "homepage": "https://github.com/abdnh/anki-addon-template",
+    "min_point_version": 45,
+    "name": "Anki Links",
+    "package": "anki_links"
+}
