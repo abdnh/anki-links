@@ -7,7 +7,6 @@ from anki.utils import is_lin, is_mac, is_win
 if is_win:
     import winreg
 
-import aqt
 from aqt.qt import *
 
 
@@ -61,7 +60,7 @@ Categories=Education;
 MimeType=x-scheme-handler/anki;"""
 
         desktop_path = os.path.join(apps_dir, "anki-protocol-handler.desktop")
-        with open(desktop_path, "w") as f:
+        with open(desktop_path, "w", encoding="utf-8") as f:
             f.write(desktop_content)
 
         # Make desktop file executable
@@ -80,7 +79,7 @@ MimeType=x-scheme-handler/anki;"""
 </mime-info>"""
 
         mime_path = os.path.join(mime_dir, "packages", "anki-protocol.xml")
-        with open(mime_path, "w") as f:
+        with open(mime_path, "w", encoding="utf-8") as f:
             f.write(mime_content)
 
         # 3. Update system databases
@@ -109,6 +108,7 @@ def register_protocol_handler_macos() -> None:
         if not os.path.exists(anki_path):
             anki_path = os.path.expanduser("~/Applications/Anki.app")
             if not os.path.exists(anki_path):
+                # pylint: disable=broad-exception-raised
                 raise Exception("Anki.app not found")
 
         # Register URL scheme using Launch Services

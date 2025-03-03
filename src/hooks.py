@@ -1,9 +1,8 @@
+from __future__ import annotations
+
 import sys
 from urllib.parse import unquote
 
-import anki
-import aqt
-import aqt.utils
 from aqt import gui_hooks, mw
 from aqt.qt import *
 
@@ -11,18 +10,10 @@ from .server import LocalServer, handle_url_protocol
 
 
 class MonkeyPatch:
-    _og_onAppMsg = None
+    def __init__(self, og_onAppMsg: Callable[[str], None]) -> None:
+        self.og_onAppMsg = og_onAppMsg
 
-    @property
-    def og_onAppMsg(self):
-        return type(self)._og_onAppMsg
-
-    @og_onAppMsg.setter
-    def og_onAppMsg(self, val):
-        type(self)._og_onAppMsg = val
-
-    @staticmethod
-    def on_app_msg_wrapper_hk(self: "AnkiQt"):
+    def on_app_msg_wrapper_hk(self) -> Callable[[str], None]:
         def normalize_anki_url(url: str) -> str:
             """Normalize Anki URLs across all platforms"""
             print(f"Normalizing URL: {url}")
@@ -76,15 +67,15 @@ class MonkeyPatch:
                 handle_url_protocol(normalized_url)
                 return None
 
-            return MonkeyPatch.og_onAppMsg(buf)
+            return self.og_onAppMsg(buf)
 
         return on_app_msg_hk
 
 
 def setup_app_hook() -> None:
-    MonkeyPatch.og_onAppMsg = mw.onAppMsg
+    monkeypatch = MonkeyPatch(mw.onAppMsg)
     mw.app.appMsg.disconnect(mw.onAppMsg)
-    mw.onAppMsg = MonkeyPatch.on_app_msg_wrapper_hk(mw)
+    mw.onAppMsg = monkeypatch.on_app_msg_wrapper_hk()  # type: ignore
     mw.app.appMsg.connect(mw.onAppMsg)
 
 

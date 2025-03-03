@@ -1,10 +1,7 @@
-import os
 import queue
-import sys
 import threading
 import time
 
-import anki
 import aqt
 import flask
 import requests
@@ -58,7 +55,7 @@ def validate_command(command: str, parts: list) -> tuple[bool, str]:
 
 
 # Add command queue to store pending commands
-command_queue = queue.Queue()
+command_queue: queue.Queue = queue.Queue()
 
 
 def process_command(command: str, parts: list) -> None:
@@ -81,7 +78,7 @@ def process_command(command: str, parts: list) -> None:
             mw.taskman.run_on_main(lambda: select_deck(deck_name))
 
     except Exception as e:
-        logger.error(f"Error processing queued command: {e}")
+        logger.error("Error processing queued command: %s", e)
 
 
 def command_processor() -> None:
@@ -110,7 +107,7 @@ def handle_request(pathin: str) -> Response:
 
         return flask.make_response("Command queued", 202)
     except Exception as e:
-        logger.error(f"Error handling request: {e}")
+        logger.error("Error handling request: %s", e)
         return flask.make_response(str(e), 500)
 
 

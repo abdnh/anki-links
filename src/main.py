@@ -1,9 +1,6 @@
 import os
 import sys
 
-import anki
-import aqt
-import aqt.utils
 from aqt import mw
 from aqt.qt import *
 
@@ -48,7 +45,7 @@ def add_menu() -> None:
     mw.form.menuTools.addMenu(menu)
 
 
-def init():
+def init() -> None:
     print("init")
     server = LocalServer(config["host"], config["port"])
     server.start()
