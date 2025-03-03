@@ -14,11 +14,8 @@ from aqt.qt import *
 from flask import Response
 from waitress import create_server
 
-from .log import logger
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "vendor"))
-
 from .config import config
+from .log import logger
 
 app = flask.Flask(__name__, root_path="/fake")
 

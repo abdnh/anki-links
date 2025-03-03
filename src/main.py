@@ -7,12 +7,11 @@ import aqt.utils
 from aqt import mw
 from aqt.qt import *
 
-from .hooks import setup_app_hook, setup_unload_hook
-
 sys.path.append(os.path.join(os.path.dirname(__file__), "vendor"))
 
 from .config import config
 from .consts import consts
+from .hooks import setup_app_hook, setup_unload_hook
 from .protocol import register_protocol_handler, unregister_protocol_handler
 from .server import LocalServer
 
