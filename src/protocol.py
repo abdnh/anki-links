@@ -101,51 +101,29 @@ MimeType=x-scheme-handler/anki;"""
         print(f"Failed to register Linux protocol handler: {e}")
 
 
+def _register_protocol_handler_macos(bundle_id: str) -> None:
+    from Foundation import NSString
+    from LaunchServices import LSSetDefaultHandlerForURLScheme
+
+    cf_scheme = NSString.stringWithString_("anki")
+    cf_bundle_id = NSString.stringWithString_(bundle_id)
+    result = LSSetDefaultHandlerForURLScheme(cf_scheme, cf_bundle_id)
+    if result != 0:
+        raise Exception("LSSetDefaultHandlerForURLScheme failed")
+
+
 def register_protocol_handler_macos() -> None:
     try:
-        # Get the Anki.app path
-        anki_path = "/Applications/Anki.app"
-        if not os.path.exists(anki_path):
-            anki_path = os.path.expanduser("~/Applications/Anki.app")
-            if not os.path.exists(anki_path):
-                # pylint: disable=broad-exception-raised
-                raise Exception("Anki.app not found")
-
-        # Register URL scheme using Launch Services
-        plist_content = {
-            "LSHandlers": [
-                {
-                    "LSHandlerRole": "all",
-                    "LSHandlerURLScheme": "anki",
-                    "LSHandlerContentTag": "anki",
-                    "LSHandlerContentTagClass": "public.url-scheme",
-                    "LSHandlerPreferredHandler": "org.qt-project.Qt.QtWebEngineCore",
-                }
-            ]
-        }
-
-        plist_path = os.path.expanduser(
-            "~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist"
-        )
-
-        # Write using defaults command
-        subprocess.run(
-            [
-                "defaults",
-                "write",
-                plist_path,
-                "LSHandlers",
-                "-array-add",
-                str(plist_content["LSHandlers"][0]),
-            ],
-            check=True,
-        )
-
-        # Reload Launch Services database
-        subprocess.run(["killall", "-HUP", "Finder"], check=True)
-        subprocess.run(["killall", "-HUP", "Dock"], check=True)
+        _register_protocol_handler_macos("net.ankiweb.dtop")
     except Exception as e:
         print(f"Failed to register macOS protocol handler: {e}")
+
+
+def unregister_protocol_handler_macos() -> None:
+    try:
+        _register_protocol_handler_macos("")
+    except Exception as e:
+        print(f"Failed to unregister macOS protocol handler: {e}")
 
 
 def unregister_protocol_handler_windows() -> None:
@@ -177,21 +155,6 @@ def unregister_protocol_handler_linux() -> None:
             subprocess.run(["xdg-mime", "unset", "x-scheme-handler/anki"], check=True)
     except Exception as e:
         print(f"Failed to unregister Linux protocol handler: {e}")
-
-
-def unregister_protocol_handler_macos() -> None:
-    try:
-        # Remove URL scheme from Launch Services
-        plist_path = os.path.expanduser(
-            "~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist"
-        )
-        subprocess.run(["defaults", "delete", plist_path, "LSHandlers"], check=True)
-
-        # Reload Launch Services database
-        subprocess.run(["killall", "-HUP", "Finder"], check=True)
-        subprocess.run(["killall", "-HUP", "Dock"], check=True)
-    except Exception as e:
-        print(f"Failed to unregister macOS protocol handler: {e}")
 
 
 def check_admin_windows() -> bool:

@@ -131,6 +131,23 @@ psutil==5.9.8 ; sys_platform == "win32"
     #   -r requirements/dev.in
     #   anki
     #   aqt
+pyobjc-core==11.0
+    # via
+    #   pyobjc-framework-cocoa
+    #   pyobjc-framework-coreservices
+    #   pyobjc-framework-fsevents
+    #   pyobjc-framework-launchservices
+pyobjc-framework-cocoa==11.0 ; sys_platform == "darwin"
+    # via
+    #   -r requirements/bundle.in
+    #   pyobjc-framework-coreservices
+    #   pyobjc-framework-fsevents
+pyobjc-framework-coreservices==11.0
+    # via pyobjc-framework-launchservices
+pyobjc-framework-fsevents==11.0
+    # via pyobjc-framework-coreservices
+pyobjc-framework-launchservices==11.0 ; sys_platform == "darwin"
+    # via -r requirements/bundle.in
 pylint==3.0.3
     # via -r requirements/dev.in
 pyproject-hooks==1.0.0

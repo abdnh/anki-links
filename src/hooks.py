@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from typing import Any
 from urllib.parse import unquote
 
 from aqt import gui_hooks, mw
@@ -72,11 +73,27 @@ class MonkeyPatch:
         return on_app_msg_hk
 
 
+class MacosUrlHandler(QObject):
+    def eventFilter(self, obj: Any, event: QEvent) -> bool:
+        if event.type() == QEvent.Type.FileOpen:
+            assert isinstance(event, QFileOpenEvent)
+            url = event.url().toString()
+            print("Received URL:", url)
+            if url and "anki:" in url:
+                print(f"handling URL: {url}")
+                handle_url_protocol(url)
+                return True
+
+        return super().eventFilter(obj, event)
+
+
 def setup_app_hook() -> None:
     monkeypatch = MonkeyPatch(mw.onAppMsg)
     mw.app.appMsg.disconnect(mw.onAppMsg)
     mw.onAppMsg = monkeypatch.on_app_msg_wrapper_hk()  # type: ignore
     mw.app.appMsg.connect(mw.onAppMsg)
+    macos_url_handler = MacosUrlHandler(mw)
+    mw.app.installEventFilter(macos_url_handler)
 
 
 def profile_unloaded_hk(server: LocalServer) -> None:
