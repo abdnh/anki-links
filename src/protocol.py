@@ -45,7 +45,7 @@ def register_protocol_handler_windows() -> None:
 def register_protocol_handler_linux() -> None:
     try:
         # 1. Create desktop entry file
-        apps_dir = os.path.expanduser("/usr/share/applications")
+        apps_dir = os.path.expanduser("~/.local/share/applications")
         os.makedirs(apps_dir, exist_ok=True)
 
         desktop_content = """[Desktop Entry]
@@ -67,7 +67,7 @@ MimeType=x-scheme-handler/anki;"""
         os.chmod(desktop_path, 0o755)
 
         # 2. Create and update MIME type
-        mime_dir = os.path.expanduser("/usr/share/mime")
+        mime_dir = os.path.expanduser("~/.local/share/mime")
         os.makedirs(os.path.join(mime_dir, "packages"), exist_ok=True)
 
         mime_content = """<?xml version="1.0" encoding="UTF-8"?>
@@ -139,13 +139,13 @@ def unregister_protocol_handler_windows() -> None:
 def unregister_protocol_handler_linux() -> None:
     try:
         # Remove desktop file
-        apps_dir = os.path.expanduser("/usr/share/applications")
+        apps_dir = os.path.expanduser("~/.local/share/applications")
         desktop_path = os.path.join(apps_dir, "anki-protocol-handler.desktop")
         if os.path.exists(desktop_path):
             os.remove(desktop_path)
 
         # Remove MIME database entry
-        mime_dir = os.path.expanduser("/usr/share/mime")
+        mime_dir = os.path.expanduser("~/.local/share/mime")
         mime_path = os.path.join(mime_dir, "packages", "anki-protocol.xml")
         if os.path.exists(mime_path):
             os.remove(mime_path)
