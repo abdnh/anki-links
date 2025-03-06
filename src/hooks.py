@@ -4,10 +4,10 @@ import sys
 from typing import Any
 from urllib.parse import unquote
 
-from aqt import gui_hooks, mw
+from aqt import mw
 from aqt.qt import *
 
-from .server import LocalServer, handle_url_protocol
+from .handler import handle_url_protocol
 
 
 class MonkeyPatch:
@@ -94,12 +94,3 @@ def setup_app_hook() -> None:
     mw.app.appMsg.connect(mw.onAppMsg)
     macos_url_handler = MacosUrlHandler(mw)
     mw.app.installEventFilter(macos_url_handler)
-
-
-def profile_unloaded_hk(server: LocalServer) -> None:
-    if server:
-        server.shutdown()
-
-
-def setup_unload_hook(server: LocalServer) -> None:
-    gui_hooks.profile_will_close.append(lambda: profile_unloaded_hk(server))

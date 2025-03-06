@@ -6,11 +6,10 @@ from aqt.qt import *
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "vendor"))
 
-from .config import config
 from .consts import consts
-from .hooks import setup_app_hook, setup_unload_hook
+from .handler import CommandHandler
+from .hooks import setup_app_hook
 from .protocol import register_protocol_handler, unregister_protocol_handler
-from .server import LocalServer
 
 
 def on_register() -> None:
@@ -47,11 +46,10 @@ def add_menu() -> None:
 
 def init() -> None:
     print("init")
-    server = LocalServer(config["host"], config["port"])
-    server.start()
-    print("Server started")
+    handler = CommandHandler()
+    handler.start()
+    print("handler thread started")
     setup_app_hook()
-    setup_unload_hook(server)
     print("Hooks set up")
     add_menu()
 
