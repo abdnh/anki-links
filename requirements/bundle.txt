@@ -1,2 +1,19 @@
 ankiutils @ git+https://github.com/abdnh/ankiutils@b5c5dfd2a16446781cc2de06fdbd019cfa733c94
     # via -r requirements/bundle.in
+pyobjc-core==11.0
+    # via
+    #   pyobjc-framework-cocoa
+    #   pyobjc-framework-coreservices
+    #   pyobjc-framework-fsevents
+    #   pyobjc-framework-launchservices
+pyobjc-framework-cocoa==11.0 ; sys_platform == "darwin"
+    # via
+    #   -r requirements/bundle.in
+    #   pyobjc-framework-coreservices
+    #   pyobjc-framework-fsevents
+pyobjc-framework-coreservices==11.0
+    # via pyobjc-framework-launchservices
+pyobjc-framework-fsevents==11.0
+    # via pyobjc-framework-coreservices
+pyobjc-framework-launchservices==11.0 ; sys_platform == "darwin"
+    # via -r requirements/bundle.in
